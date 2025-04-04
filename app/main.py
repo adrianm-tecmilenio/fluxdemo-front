@@ -44,7 +44,7 @@ if prompt := st.chat_input("Describe la imagen que quieres generar:", disabled=s
     with st.spinner("Generando imagen..."):
         try:
             response = requests.post(
-                "http://localhost:8000/api/flux",
+                "https://fluxdemo.tecmilab.com.mx/api/flux",
                 json={
                     "prompt": prompt,
                     "session_id": st.session_state.session_id
