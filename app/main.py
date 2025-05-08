@@ -6,7 +6,7 @@ from PIL import Image
 import io
 
 # Título de la aplicación
-st.title("Generador de Imágenes con gpt-image-1")
+st.title("Generador de Imágenes con IA")
 
 # Generar un session_id único
 if "session_id" not in st.session_state:
@@ -22,7 +22,7 @@ for message in st.session_state.messages:
         if message["type"] == "text":
             st.markdown(message["content"])
         elif message["type"] == "image":
-            st.image(message["content"], caption="Imagen generada por gpt-image-1")
+            st.image(message["content"], caption=message.get("caption", ""))
 
 # Función para obtener imagen desde URL
 def get_image_from_url(url):
@@ -44,7 +44,7 @@ if prompt := st.chat_input("Describe la imagen que quieres generar:", disabled=s
     with st.spinner("Generando imagen..."):
         try:
             response = requests.post(
-                "http://20.118.119.145/api/image-generation",
+                "http://20.94.168.174/api/image-generation",
                 json={
                     "prompt": prompt,
                     "session_id": st.session_state.session_id
@@ -53,24 +53,61 @@ if prompt := st.chat_input("Describe la imagen que quieres generar:", disabled=s
             
             if response.status_code == 200:
                 response_data = response.json()
-                image_url = response_data.get("image_url", "")
+                image_url_1 = response_data.get("image_url_1", "")
+                image_url_2 = response_data.get("image_url_2", "")
                 
-                if image_url:
-                    # Obtener la imagen desde la URL
-                    image = get_image_from_url(image_url)
-                    
-                    # Agregar la imagen al historial
-                    st.session_state.messages.append({
-                        "role": "assistant", 
-                        "type": "image", 
-                        "content": image
-                    })
-                    
-                    # Mostrar la imagen
+                if image_url_1 or image_url_2:
                     with st.chat_message("assistant"):
-                        st.image(image, caption="Imagen generada por gpt-image-1")
+                        # Usar columnas para mostrar imágenes horizontalmente
+                        if image_url_1 and image_url_2:
+                            col1, col2 = st.columns(2)
+                            # Mostrar imagen de gpt-image-1
+                            with col1:
+                                image1 = get_image_from_url(image_url_1)
+                                st.image(image1, caption="gpt-image-1")
+                                # Agregar la imagen al historial
+                                st.session_state.messages.append({
+                                    "role": "assistant", 
+                                    "type": "image", 
+                                    "content": image1,
+                                    "caption": "gpt-image-1"
+                                })
+                            
+                            # Mostrar imagen de Dall-e3
+                            with col2:
+                                image2 = get_image_from_url(image_url_2)
+                                st.image(image2, caption="Dall-e3")
+                                # Agregar la imagen al historial
+                                st.session_state.messages.append({
+                                    "role": "assistant", 
+                                    "type": "image", 
+                                    "content": image2,
+                                    "caption": "Dall-e3"
+                                })
+                        elif image_url_1:
+                            # Solo mostrar imagen de gpt-image-1
+                            image1 = get_image_from_url(image_url_1)
+                            st.image(image1, caption="gpt-image-1")
+                            # Agregar la imagen al historial
+                            st.session_state.messages.append({
+                                "role": "assistant", 
+                                "type": "image", 
+                                "content": image1,
+                                "caption": "gpt-image-1"
+                            })
+                        elif image_url_2:
+                            # Solo mostrar imagen de Dall-e3
+                            image2 = get_image_from_url(image_url_2)
+                            st.image(image2, caption="Dall-e3")
+                            # Agregar la imagen al historial
+                            st.session_state.messages.append({
+                                "role": "assistant", 
+                                "type": "image", 
+                                "content": image2,
+                                "caption": "Dall-e3"
+                            })
                 else:
-                    error_msg = "La API no devolvió una URL de imagen válida."
+                    error_msg = "La API no devolvió URLs de imágenes válidas."
                     st.session_state.messages.append({
                         "role": "assistant", 
                         "type": "text", 
