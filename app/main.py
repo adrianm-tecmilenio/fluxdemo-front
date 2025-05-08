@@ -44,7 +44,7 @@ if prompt := st.chat_input("Describe la imagen que quieres generar:", disabled=s
     with st.spinner("Generando imagen..."):
         try:
             response = requests.post(
-                "https://fluxdemo.tecmilab.com.mx/api/flux",
+                "http://20.118.119.145/api/image-generation",
                 json={
                     "prompt": prompt,
                     "session_id": st.session_state.session_id
@@ -68,7 +68,7 @@ if prompt := st.chat_input("Describe la imagen que quieres generar:", disabled=s
                     
                     # Mostrar la imagen
                     with st.chat_message("assistant"):
-                        st.image(image, caption="Imagen generada por Flux")
+                        st.image(image, caption="Imagen generada por gpt-image-1")
                 else:
                     error_msg = "La API no devolvió una URL de imagen válida."
                     st.session_state.messages.append({
