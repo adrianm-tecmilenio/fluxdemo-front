@@ -6,7 +6,7 @@ from PIL import Image
 import io
 
 # Título de la aplicación
-st.title("Generador de Imágenes con Flux")
+st.title("Generador de Imágenes con gpt-image-1")
 
 # Generar un session_id único
 if "session_id" not in st.session_state:
@@ -22,7 +22,7 @@ for message in st.session_state.messages:
         if message["type"] == "text":
             st.markdown(message["content"])
         elif message["type"] == "image":
-            st.image(message["content"], caption="Imagen generada por Flux")
+            st.image(message["content"], caption="Imagen generada por gpt-image-1")
 
 # Función para obtener imagen desde URL
 def get_image_from_url(url):
@@ -40,7 +40,7 @@ if prompt := st.chat_input("Describe la imagen que quieres generar:", disabled=s
     # Mostrar spinner y deshabilitar el input
     st.session_state.loading = True
     
-    # Llamar a la API de Flux
+    # Llamar a la API de generación de imágenes
     with st.spinner("Generando imagen..."):
         try:
             response = requests.post(
